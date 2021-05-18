@@ -9,7 +9,7 @@ export const Container = styled.div`
     justify-content: center;
     text-align: center;
     height: 100vh;
-
+    background-color: var(--vanilla); 
 `
 
 export const Content = styled.div`
