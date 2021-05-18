@@ -1,6 +1,16 @@
+import { useHistory } from 'react-router';
+import Button from '../../components/button';
 import { Container, Content } from './styles'
 
 function Home() {
+
+
+    const history = useHistory()
+
+    const handleNavigation = (path) => {
+        return history.push(path)
+    }
+
 
     return <Container>
         <Content>
@@ -9,8 +19,8 @@ function Home() {
             </h1>
             <span>Organize your tasks easily!</span>
             <div>
-                <button>Register</button>
-                <button>Log in</button>
+                <Button onClick={()=> handleNavigation("/signup")} whiteSchema>Register</Button>
+                <Button onClick={()=> handleNavigation("/login")}>Log in</Button>
             </div>
         </Content>
     </Container>  
