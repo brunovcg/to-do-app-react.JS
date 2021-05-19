@@ -42,7 +42,7 @@ function Dashboard ({authenticated, setAuthenticated}) {
 
     useEffect(()=> {
         loadTasks();
-    },[]);
+    });
 
     const onSubmit = ({ task }) => {
         if(!task){
