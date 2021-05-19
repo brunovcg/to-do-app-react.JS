@@ -1,27 +1,22 @@
 import { Background, Container, Content, AnimationContainer } from './styles';
 import Button from '../../components/button';
-import { Link, useHistory, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import Input from '../../components/Input';
-import { FiUser, FiMail, FiLock} from 'react-icons/fi';
+import { FiMail, FiLock} from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup'
 import api from '../../services/api';
 import { toast } from 'react-toastify'
 
-function Signup({authenticated}) {
+function Login( {authenticated, setAuthenticated} ) {
 
     const schema = yup.object().shape({
-        name: yup.string().required("required field!"),
         email: yup.string().email('e-mail invalid!').required("required field!"),
         password: yup
             .string()
             .min(8, "8 digits minimum!")
             .required("required field!"),
-        passwordConfirm: yup
-            .string()
-            .oneOf([yup.ref("password")], "password doesn't match!")
-            .required("required field!")
     })
 
     const { 
@@ -34,16 +29,22 @@ function Signup({authenticated}) {
 
     const history = useHistory()
 
-    const onSubmitFunction = ({name, email, password}) => {
-       const user = {name, email, password};
+    const onSubmitFunction = (data) => {
+
         api
-        .post("/user/register", user)
-        .then((_)=>{
-        toast.success("Account Created")
-        return history.push('/login')
-            
+            .post("/user/login", data)
+            .then(response => {
+            const { token } = response.data;
+
+            localStorage.clear()
+
+            localStorage.setItem("@Doit:token", JSON.stringify(token));
+
+            setAuthenticated(true)
+
+            return history.push("/dashboard")
         })
-        .catch((err) => toast.error("Error, try another e-mail."))
+        .catch(err=> toast.error('Wrong email or password'))
     }
 
     if(authenticated) {
@@ -51,19 +52,11 @@ function Signup({authenticated}) {
     }
     
     return <Container>
-        <Background/>
         <Content>
             <AnimationContainer>
                 <form onSubmit={handleSubmit(onSubmitFunction)}>
-                    <h1>Register</h1>
-                    <Input 
-                        icon={FiUser}
-                        label="User"
-                        placeholder="Your Name"
-                        register={register}
-                        name="name"
-                        error= {errors.name?.message}
-                    />
+                    <h1>Login</h1>
+                 
                     <Input 
                         icon={FiMail}
                         label="Email"
@@ -74,30 +67,23 @@ function Signup({authenticated}) {
                     />
                     <Input 
                         label="Password" 
-                        placeholder="A strong Password" 
+                        placeholder="What's your Password?" 
                         type="password"
                         icon={FiLock}
                         register={register}
                         name="password"
                         error= {errors.password?.message}
                     />  
-                    <Input 
-                        label="Password Confirm" 
-                        placeholder="Confirm Password" 
-                        type="password"
-                        icon={FiLock}
-                        register={register}
-                        name="passwordConfirm"
-                        error= {errors.passwordConfirm?.message}
-                    />
-                    <Button type="submit">Apply</Button>
+      
+                    <Button type="submit">Login</Button>
                     <p>
-                        Already a register user? <Link to="/login">Login.. </Link>
+                        Don't have an account yet? <Link to="/signup">SignUp.. </Link>
                     </p>
                 </form>
             </AnimationContainer>
         </Content>
+        <Background/>
     </Container>
 }
 
-export default Signup
+export default Login

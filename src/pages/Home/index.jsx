@@ -1,8 +1,8 @@
-import { useHistory } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import Button from '../../components/button';
 import { Container, Content } from './styles'
 
-function Home() {
+function Home({authenticated}) {
 
 
     const history = useHistory()
@@ -11,6 +11,9 @@ function Home() {
         return history.push(path)
     }
 
+    if(authenticated) {
+        return <Redirect to="/dashboard"/>
+    }
 
     return <Container>
         <Content>
